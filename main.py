@@ -6,6 +6,11 @@ import os
 import sys
 import base64
 
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from urllib.parse import quote_plus
+
 UPLOAD_FOLDER = './upload'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -33,8 +38,32 @@ def upload():
     for r in result:
         if r[2] >= 0.5:
             texts.append(r[1])
+    text = " ".join(texts)
+    texts = Google_Search(text)
     data = {"filename" : 'sample.jpg', "texts" : texts}
     return jsonify(data)
+
+def Google_Search(Text):
+  url = 'https://www.google.com/search?q='
+  kword = Text
+  base_url = url + quote_plus(kword)
+
+  chrome_options = webdriver.ChromeOptions()
+  chrome_options.headless = True
+  chrome_options.add_argument('--no-sandbox')
+  chrome_options.add_argument('--disable-dev-shm-usage')
+  driver = webdriver.Chrome('chromedriver', options=chrome_options)
+  driver.get(base_url)
+
+  html = driver.page_source
+  soup = BeautifulSoup(html,"lxml")
+
+  v = soup.select('.yuRUbf')
+  result = v[0].select_one('.LC20lb.DKV0Md').text
+  link = v[0].a.attrs['href']
+
+  driver.close()                       # 크롬 창 닫기
+  return result
 
 if __name__ == "__main__":
     app.run(host = "211.244.91.156", port = 8000)
