@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from urllib.parse import quote_plus
+from webdriver_manager.chrome import ChromeDriverManager
 
 UPLOAD_FOLDER = './upload'
 app = Flask(__name__)
@@ -30,16 +31,16 @@ def upload():
     # 저장된 이미지를 easyocr에 넣고 판독
     reader = easyocr.Reader(['ko', 'en'])
     result = reader.readtext(path)
-    #result = reader.readtext(path)
-    
-    
     # 정확도가 0.5 이상인 text들만 저장
     texts = []
     for r in result:
         if r[2] >= 0.5:
             texts.append(r[1])
+    
     text = " ".join(texts)
     texts = Google_Search(text)
+    print('ok2')
+    print(texts)
     data = {"filename" : 'sample.jpg', "texts" : texts}
     return jsonify(data)
 
@@ -49,10 +50,10 @@ def Google_Search(Text):
   base_url = url + quote_plus(kword)
 
   chrome_options = webdriver.ChromeOptions()
-  chrome_options.headless = True
-  chrome_options.add_argument('--no-sandbox')
-  chrome_options.add_argument('--disable-dev-shm-usage')
-  driver = webdriver.Chrome('chromedriver', options=chrome_options)
+  #chrome_options.headless = True
+  #chrome_options.add_argument('--no-sandbox')
+  #chrome_options.add_argument('--disable-dev-shm-usage')
+  driver = webdriver.Chrome(ChromeDriverManager().install())
   driver.get(base_url)
 
   html = driver.page_source
