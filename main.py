@@ -29,7 +29,7 @@ def upload():
     with open(path, 'wb') as fh:
         fh.write(base64.decodebytes(file.encode('utf-8')))
     # 저장된 이미지를 easyocr에 넣고 판독
-    reader = easyocr.Reader(['ko', 'en'])
+    reader = easyocr.Reader(['en', 'ko'])
     result = reader.readtext(path)
     # 정확도가 0.5 이상인 text들만 저장
     texts = []
@@ -38,6 +38,7 @@ def upload():
             texts.append(r[1])
     
     text = " ".join(texts)
+    print(text)
     texts = Google_Search(text)
     print('ok2')
     print(texts)
@@ -67,5 +68,5 @@ def Google_Search(Text):
   return result
 
 if __name__ == "__main__":
-    app.run(host = "211.244.91.156", port = 8000)
+    app.run(host = "180.64.184.81", port = 8000)
     #'https://211.244.91.156'
