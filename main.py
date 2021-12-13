@@ -12,6 +12,8 @@ from selenium import webdriver
 from urllib.parse import quote_plus
 from webdriver_manager.chrome import ChromeDriverManager
 
+import NaverShopSearch
+
 UPLOAD_FOLDER = './upload'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -40,9 +42,14 @@ def upload():
     text = " ".join(texts)
     print(text)
     texts = Google_Search(text)
-    print('ok2')
-    print(texts)
-    data = {"filename" : 'sample.jpg', "texts" : texts}
+    
+    if isEnglishOrKorean(texts) == "k":
+        text_search = texts
+    else:
+        text_search = NaverShopSearch.hangul_sort(NaverShopSearch.get_translate(texts))[0]
+    url = NaverShopSearch.Return_NaverUrl(text_search)
+    final_ingridient = NaverShopSearch.Make_Sentence(NaverShopSearch.ingridient(url))
+    data = {"filename" : 'sample.jpg', "texts" : texts, "ingridient" : fianl_ingridient}
     return jsonify(data)
 
 def Google_Search(Text):
@@ -66,6 +73,16 @@ def Google_Search(Text):
 
   driver.close()                       # 크롬 창 닫기
   return result
+
+def isEnglishOrKorean(input_s): #한글인지 영어인지 판별
+    k_count = 0
+    e_count = 0
+    for c in input_s:
+        if ord('가') <= ord(c) <= ord('힣'):
+            k_count+=1
+        elif ord('a') <= ord(c.lower()) <= ord('z'):
+            e_count+=1
+    return "k" if k_count>1 else "e"
 
 if __name__ == "__main__":
     app.run(host = "180.64.184.81", port = 8000)
