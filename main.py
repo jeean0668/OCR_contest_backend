@@ -40,16 +40,21 @@ def upload():
             texts.append(r[1])
     
     text = " ".join(texts)
-    texts = Google_Search(text)
-    
-    if isEnglishOrKorean(texts) == "k":
+    print(text)
+    if isEnglishOrKorean(text) == "k":
+        texts = NaverShopSearch.hangul_sort(text)[0]
         text_search = texts
     else:
+        texts = Google_Search(text)
         text_search = NaverShopSearch.hangul_sort(NaverShopSearch.get_translate(texts))[0]
-    url = NaverShopSearch.Return_NaverUrl(text_search)
-    final_ingridient = NaverShopSearch.Make_Sentence(NaverShopSearch.ingridient(url))
-    data = {"filename" : 'sample.jpg', "texts" : texts, "ingridient" : fianl_ingridient}
+    try:
+        url = NaverShopSearch.Return_NaverUrl(text_search)
+        final_ingridient = NaverShopSearch.Make_Sentence(NaverShopSearch.ingridient(url))
+    except:
+        print("There're no items")
+    data = {"filename" : 'sample.jpg', "texts" : texts}
     return jsonify(data)
+
 
 def Google_Search(Text):
   url = 'https://www.google.com/search?q='
