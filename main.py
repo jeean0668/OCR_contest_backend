@@ -1,24 +1,21 @@
-import easyocr
+import os, io
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'D:/Project/flutter_application_1/OCR_contest_backend/VisionAPI/eighth-parity-333905-9ec25f073c68.json'
+
 from flask import Flask, request, flash, redirect, url_for, jsonify
 from PIL import Image
 from werkzeug.utils import secure_filename
-import os
 import sys
 import base64
+import cv2
 
-import requests
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from urllib.parse import quote_plus
-from webdriver_manager.chrome import ChromeDriverManager
+import NaverShopSearch
+
+from VisionAPI import vision_api
 
 UPLOAD_FOLDER = './upload'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-@app.route('/', methods = ['GET'])
-def init():
-    return 'hello world'
 
 @app.route('/upload', methods = ['POST'])
 def upload():
@@ -26,45 +23,20 @@ def upload():
     # POST로 front에서 이미지를 가져와 저장
     file = request.form.get('file')
     path = os.path.join('upload', 'sample.png')
+    
     with open(path, 'wb') as fh:
         fh.write(base64.decodebytes(file.encode('utf-8')))
-    # 저장된 이미지를 easyocr에 넣고 판독
-    reader = easyocr.Reader(['ko', 'en'])
-    result = reader.readtext(path)
-    # 정확도가 0.5 이상인 text들만 저장
-    texts = []
-    for r in result:
-        if r[2] >= 0.5:
-            texts.append(r[1])
     
-    text = " ".join(texts)
-    texts = Google_Search(text)
-    print('ok2')
-    print(texts)
+    texts = vision_api(path)
+    try:
+        data = NaverShopSearch.ingridient(NaverShopSearch.Return_NaverUrl(texts))
+        sentence = NaverShopSearch.Make_Sentence(data)
+    except:
+        sentence = "네이버쇼핑에 성분이 나와있지 않습니다."
+    print(sentence)
     data = {"filename" : 'sample.jpg', "texts" : texts}
     return jsonify(data)
 
-def Google_Search(Text):
-  url = 'https://www.google.com/search?q='
-  kword = Text
-  base_url = url + quote_plus(kword)
-
-  chrome_options = webdriver.ChromeOptions()
-  #chrome_options.headless = True
-  #chrome_options.add_argument('--no-sandbox')
-  #chrome_options.add_argument('--disable-dev-shm-usage')
-  driver = webdriver.Chrome(ChromeDriverManager().install())
-  driver.get(base_url)
-
-  html = driver.page_source
-  soup = BeautifulSoup(html,"lxml")
-
-  v = soup.select('.yuRUbf')
-  result = v[0].select_one('.LC20lb.DKV0Md').text
-  link = v[0].a.attrs['href']
-
-  driver.close()                       # 크롬 창 닫기
-  return result
 
 if __name__ == "__main__":
     app.run(host = "211.244.91.156", port = 8000)
