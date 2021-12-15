@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 import easyocr
 from flask import Flask, request, flash, redirect, url_for, jsonify
 from PIL import Image
@@ -39,18 +40,24 @@ def upload():
         if r[2] >= 0.5:
             texts.append(r[1])
     
+    print(texts)
     text = " ".join(texts)
     print(text)
-    texts = Google_Search(text)
-    
-    if isEnglishOrKorean(texts) == "k":
+    """if isEnglishOrKorean(text) == "k":
+        texts = NaverShopSearch.hangul_sort(text)[0]
         text_search = texts
     else:
+        texts = Google_Search(text)
         text_search = NaverShopSearch.hangul_sort(NaverShopSearch.get_translate(texts))[0]
-    url = NaverShopSearch.Return_NaverUrl(text_search)
-    final_ingridient = NaverShopSearch.Make_Sentence(NaverShopSearch.ingridient(url))
-    data = {"filename" : 'sample.jpg', "texts" : texts, "ingridient" : fianl_ingridient}
+    try:
+        url = NaverShopSearch.Return_NaverUrl(text_search)
+        final_ingridient = NaverShopSearch.Make_Sentence(NaverShopSearch.ingridient(url))
+    except:
+        print("There're no items")"""
+    #data = {"filename" : 'sample.jpg', "texts" : texts}
+    data = {"filename" : 'sample.jpg', "texts" : text}
     return jsonify(data)
+
 
 def Google_Search(Text):
   url = 'https://www.google.com/search?q='
