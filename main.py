@@ -24,19 +24,14 @@ def upload():
     file = request.form.get('file')
     path = os.path.join('upload', 'sample.png')
     
-    with open(path, 'wb') as fh:
-        fh.write(base64.decodebytes(file.encode('utf-8')))
-    
-    texts = vision_api(path)
+    texts = vision_api(path)[0]
     try:
         data = NaverShopSearch.ingridient(NaverShopSearch.Return_NaverUrl(texts))
-        sentence = NaverShopSearch.Make_Sentence(data)
+        ingridients = NaverShopSearch.Make_Sentence(data)
     except:
-        sentence = "네이버쇼핑에 성분이 나와있지 않습니다."
-    print(sentence)
-    data = {"filename" : 'sample.jpg', "texts" : texts}
-    return jsonify(data)
-
+        ingridients = vision_api(path)[1]
+    data = {"filename" : 'sample.jpg', "texts" : texts, "ingridients" : ingridients}
+    return jsonify(data)    
 
 if __name__ == "__main__":
     app.run(host = "211.244.91.156", port = 8000)
