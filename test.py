@@ -1,24 +1,19 @@
+import os, io, re
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'D:/Project/flutter_application_1/OCR_contest_backend/VisionAPI/eighth-parity-333905-9ec25f073c68.json'
+
+from VisionAPI import vision_api
 import NaverShopSearch
 
-def isEnglishOrKorean(input_s): #한글인지 영어인지 판별
-    k_count = 0
-    e_count = 0
-    for c in input_s:
-        if ord('가') <= ord(c) <= ord('힣'):
-            k_count+=1
-        elif ord('a') <= ord(c.lower()) <= ord('z'):
-            e_count+=1
-    return "k" if k_count>1 else "e"
+path = os.path.join(os.path.dirname(__file__),'resources')
+file_list = os.listdir(path)
 
-texts = "DALEAF galactomyces better perfume shampoo 1000ml"
+path = os.path.join(path,file_list[2])
+texts = vision_api(path)
+try:
+    data = NaverShopSearch.ingridient(NaverShopSearch.Return_NaverUrl(texts))
+    sentence = NaverShopSearch.Make_Sentence(data)
+except:
+    sentence = "네이버쇼핑에 성분이 나와있지 않습니다."
 
-if isEnglishOrKorean(texts) == "k":
-    text_search = texts
-else:
-    text_search = NaverShopSearch.hangul_sort(NaverShopSearch.get_translate(texts))[0]
-
-print(text_search)
-url = NaverShopSearch.Return_NaverUrl(text_search)
-final_ingridient = NaverShopSearch.Make_Sentence(NaverShopSearch.ingridient(url))
-
-print(final_ingridient)
+print(texts, sentence)
