@@ -1,5 +1,4 @@
 import os, io, re
-#os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'D:/Project/flutter_application_1/OCR_contest_backend/VisionAPI/eighth-parity-333905-9ec25f073c68.json'
 
 from google.cloud import vision
 from google.cloud import vision_v1
@@ -26,8 +25,14 @@ def vision_api(path):
         textlist = textlist + text.description
 
     keyword = ["샴푸","트리트먼트","세럼","토너","크림","에센스","앰플","패드","프라이머","바디워시","염색","토닉","부스터","쿠션"]
-    
+    keyword2 = ["전성분","사용시의","효능효과","사용 시의","비매품"]
 
+    idx2 = []
+    for i in keyword2:
+        if textlist.find(i)>0:
+            idx2.append(textlist.find(i))
+    ingridient = textlist[smallest_number12(idx2)[0]:smallest_number12(idx2)[1]]
+    ingridients = remove(ingridient)
     f = open(os.path.join(os.path.dirname(__file__),'txt',"result.txt"),encoding='UTF-8')
     lines = []
     sen = []
@@ -55,4 +60,15 @@ def vision_api(path):
     else:
         final_text = "제품명이 나와있지 않습니다."
     
-    return final_text
+    return final_text, ingridients
+
+def smallest_number12(arr):
+    unique_nums = set(arr)
+    sorted_nums = sorted(unique_nums, reverse=False)
+    return sorted_nums[0], sorted_nums[1]
+
+def remove(arr):
+    result = arr.replace("[","")[0:-1]
+    result = arr.replace("]","")[0:-1]
+    result = arr.replace("\n","")[0:-1]
+    return result

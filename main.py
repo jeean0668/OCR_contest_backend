@@ -26,26 +26,14 @@ def upload():
     file = request.form.get('file')
     path = os.path.join('upload', 'sample.png')
     
-    with open(path, 'wb') as fh:
-        fh.write(base64.decodebytes(file.encode('utf-8')))
-    
-    # debuging용
-    #texts = 'while debugin...'
-    #sentence = texts
-    texts = vision_api(path)
+    texts = vision_api(path)[0]
     try:
         data = NaverShopSearch.ingridient(NaverShopSearch.Return_NaverUrl(texts))
-        sentence = NaverShopSearch.Make_Sentence(data)
+        ingredients = NaverShopSearch.Make_Sentence(data)
     except:
-        sentence = "네이버쇼핑에 성분이 나와있지 않습니다."
-    print(sentence)
-    data = {
-        "filename" : 'sample.jpg', 
-        "texts" : texts, 
-        "ingredients" : sentence
-    }
-    return jsonify(data)
-
+        ingredients = vision_api(path)[1]
+    data = {"filename" : 'sample.jpg', "texts" : texts, "ingredients" : ingredients}
+    return jsonify(data)    
 
 def isEnglishOrKorean(input_s): #한글인지 영어인지 판별
     k_count = 0
