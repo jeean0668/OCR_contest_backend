@@ -28,7 +28,7 @@ def upload():
     path = os.path.join('upload', 'sample.png')
     with open(path, 'wb') as fh:
         fh.write(base64.decodebytes(file.encode('utf-8')))
-    
+   
     texts = vision_api(path)[0]
     try:
         data = NaverShopSearch.ingridient(NaverShopSearch.Return_NaverUrl(texts))
