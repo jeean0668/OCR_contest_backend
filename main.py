@@ -24,7 +24,10 @@ def upload():
     
     # POST로 front에서 이미지를 가져와 저장
     file = request.form.get('file')
+    
     path = os.path.join('upload', 'sample.png')
+    with open(path, 'wb') as fh:
+        fh.write(base64.decodebytes(file.encode('utf-8')))
     
     texts = vision_api(path)[0]
     try:
