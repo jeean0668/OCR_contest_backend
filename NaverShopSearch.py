@@ -5,8 +5,8 @@ import json
 from bs4 import BeautifulSoup
 
 def Return_NaverUrl(text):
-    client_id = "" # <-- client_id 기입
-    client_secret = "" # <-- client_secret 기입
+    client_id = "okADh5t8E8j9Tmg_NEdc" # <-- client_id 기입
+    client_secret = "n3HlKEzx4u" # <-- client_secret 기입
 
     query = text
     query = urllib.parse.quote(query)

@@ -1,6 +1,6 @@
 import os, io
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'D:/Project/flutter_application_1/OCR_contest_backend/VisionAPI/eighth-parity-333905-9ec25f073c68.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:/Users/COMG/programming/AI_Backend/eighth-parity-333905-9ec25f073c68.json'
 
 from flask import Flask, request, flash, redirect, url_for, jsonify
 from PIL import Image
@@ -29,6 +29,9 @@ def upload():
     with open(path, 'wb') as fh:
         fh.write(base64.decodebytes(file.encode('utf-8')))
     
+    # debuging용
+    #texts = 'while debugin...'
+    #sentence = texts
     texts = vision_api(path)
     try:
         data = NaverShopSearch.ingridient(NaverShopSearch.Return_NaverUrl(texts))
@@ -36,7 +39,11 @@ def upload():
     except:
         sentence = "네이버쇼핑에 성분이 나와있지 않습니다."
     print(sentence)
-    data = {"filename" : 'sample.jpg', "texts" : texts}
+    data = {
+        "filename" : 'sample.jpg', 
+        "texts" : texts, 
+        "ingredients" : sentence
+    }
     return jsonify(data)
 
 
