@@ -31,7 +31,7 @@ def vision_api(path):
         for i in keyword2:
             if textlist.find(i)>0:
                 idx2.append(textlist.find(i))
-        ingredient = textlist[smallest_number12(idx2)[0]:smallest_number12(idx2)[1]]
+        ingredient = textlist[smallest_number12(idx2)[0]:smallest_number12(idx2)[1]+1]
         ingredients = remove(ingredient)
     except:
         ingredients = "전성분이 나와있지 않습니다."
