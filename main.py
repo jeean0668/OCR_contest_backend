@@ -30,6 +30,7 @@ def upload():
         fh.write(base64.decodebytes(file.encode('utf-8')))
    
     texts = vision_api(path)[0]
+    print(texts)
     try:
         data = NaverShopSearch.ingridient(NaverShopSearch.Return_NaverUrl(texts))
         ingredients = NaverShopSearch.Make_Sentence(data)

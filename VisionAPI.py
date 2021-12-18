@@ -20,6 +20,7 @@ def vision_api(path):
     with open('./txt/'+'result.txt', "w",encoding='UTF-8') as f:
         f.write(texts[0].description)
     
+    print(texts)    
     textlist = ''
     for text in texts:
         textlist = textlist + text.description
