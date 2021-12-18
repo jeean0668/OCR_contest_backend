@@ -96,9 +96,9 @@ def sort(ingredients):
                 result = result + " " + i
                 c+=1
         if c>0:
-            result += "이 있습니다."
+            result += "이 있습니다\n."
         else:
-            result += " 없습니다."
+            result += " 없습니다\n."
     
     
     for key, value in Bad.items():
@@ -110,8 +110,8 @@ def sort(ingredients):
                 c+=1
         
         if c>0:
-            result += "이 있습니다."
+            result += "이 있습니다\n."
         else:
-            result += " 없습니다."
+            result += " 없습니다\n."
 
     return result
