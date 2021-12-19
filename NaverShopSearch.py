@@ -77,7 +77,7 @@ def Make_Sentence(data):
     
     count = 1
     for i,j in zip(title,sub_title):
-        sentence = str(count) + "번 성분으로 " + i +"가 있으며 " + j +"로 사용됩니다."
+        sentence = str(count) + "번 성분으로 " + i +"이 있으며 " + j +"로 사용됩니다."
         final.append(sentence)
         count+=1
 
