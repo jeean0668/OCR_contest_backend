@@ -34,7 +34,7 @@ def vision_api(path):
                 idx2.append(textlist.find(i))
         ingredient = textlist[smallest_number12(idx2)[0]:smallest_number12(idx2)[1]+1]
         ingredients = remove(ingredient)
-        ingredients = sort(ingredients)
+        #ingredients = sort(ingredients)
     except:
         ingredients = "전성분이 나와있지 않습니다."
     f = open(os.path.join(os.path.dirname(__file__),'txt',"result.txt"),encoding='UTF-8')
